@@ -71,7 +71,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 .tabs{display:flex;gap:4px;padding-block:0 8px}
 .tab{border:0;background:none;padding:8px 12px;border-radius:8px;font-weight:600;color:var(--muted)}
-.off-pill{margin-left:auto;align-self:center;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--surface-2);color:var(--warn)}
+.off-pill{margin-left:auto;align-self:center;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--surface-2);color:var(--warn);white-space:nowrap}
 .off-pill.ok{color:var(--ok)}
 .tab[aria-selected="true"]{background:var(--surface-2);color:var(--ink)}
 
@@ -126,14 +126,26 @@ body.locked .rep-sel{pointer-events:none;opacity:.7}
 @keyframes flash{from{filter:brightness(1.5)}to{filter:none}}
 @media (prefers-reduced-motion:reduce){.go.flash{animation:none}.btn.holding::after,.go.holding::after{animation-duration:1ms}}
 
+.lane-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px;min-width:0}
+.lane-bar .lbl{flex:none}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px;min-width:0}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;min-width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface);
+  font:700 20px var(--f-num);font-variant-numeric:tabular-nums;color:var(--muted);display:grid;place-items:center;padding:0 6px}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.chip.busy{box-shadow:inset 0 -3px 0 var(--accent)}
+body.locked .lane-bar{display:none}
+.lane-name{cursor:text}
+.name-in{flex:1;min-width:0;font:700 16px var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--accent);border-radius:6px;padding:2px 6px}
 .add-lane{border:2px dashed var(--line);background:none;border-radius:12px;color:var(--muted);font-weight:600;min-height:64px;
   display:flex;align-items:center;justify-content:center;gap:6px;font-size:15px}
 .add-lane:disabled{display:none}
 .add-lane b{font-size:24px;line-height:1}
 /* Wide screens: one column per lane, side by side */
 @media (min-width:760px){
-  .lanes{grid-template-columns:repeat(var(--n),minmax(0,1fr)) 52px;gap:8px;align-items:stretch}
-  .lanes.full,body.locked .lanes{grid-template-columns:repeat(var(--n),minmax(0,1fr))}
+  .lanes{grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:8px;align-items:stretch}
+  .lanes[data-n="1"]{max-width:520px}
+  .lanes[data-n="2"]{max-width:900px}
   .lane{grid-template-columns:1fr;grid-template-rows:auto 1fr;min-height:calc(100vh - 190px);min-height:calc(100dvh - 190px)}
   .lane::before{left:0;right:0;bottom:auto;width:auto;height:6px;background:repeating-linear-gradient(90deg,var(--lc) 0 14px,var(--surface) 14px 18px)}
   .lane-info{padding:14px 10px 10px}
@@ -200,7 +212,7 @@ td input.bad{border-color:var(--warn)}
 .check input{width:22px;height:22px;accent-color:var(--accent)}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:12px}
 .card h2{margin:0;font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-@media (max-width:420px){.clock{font-size:40px}.go{font-size:22px}.pace-time{font-size:28px}.deck-actions .btn{padding:8px 10px}}
+@media (max-width:420px){.chip{min-width:40px;height:42px;font-size:18px}.lane-bar{gap:8px}.clock{font-size:40px}.go{font-size:22px}.pace-time{font-size:28px}.deck-actions .btn{padding:8px 10px}}
 </style>
 </head>
 <body>
@@ -237,8 +249,9 @@ td input.bad{border-color:var(--warn)}
 
 <main class="wrap">
   <section id="v-chrono">
+    <div class="lane-bar"><span class="lbl">Athlètes</span><div class="chips" id="chips" role="group" aria-label="Nombre d'athlètes"></div></div>
     <div class="lanes" id="lanes"></div>
-    <p class="hint">Le gros bouton passe de <b>Départ</b> à <b>Split</b> puis <b>Arrivée</b>; le temps est pris au moment où le doigt touche, et un glissement pour faire défiler n'enregistre rien. <b>Split manqué:</b> garde le doigt appuyé sur Split pour enregistrer directement l'arrivée. <b>Fréq. bras:</b> 3 taps au même point du cycle (2 cycles). Un cadre orange indique un athlète encore dans l'eau à 15 s du send-off, rouge s'il l'a manqué. ↶ annule, ⟲ remet chrono et rép à zéro (2 taps).</p>
+    <p class="hint">Choisis le nombre d'athlètes en haut et touche un nom pour le changer. Le gros bouton passe de <b>Départ</b> à <b>Split</b> puis <b>Arrivée</b>; le temps est pris au moment où le doigt touche, et un glissement pour faire défiler n'enregistre rien. <b>Split manqué:</b> garde le doigt appuyé sur Split pour enregistrer directement l'arrivée. <b>Fréq. bras:</b> 3 taps au même point du cycle (2 cycles). Un cadre orange indique un athlète encore dans l'eau à 15 s du send-off, rouge s'il l'a manqué. ↶ annule, ⟲ remet chrono et rép à zéro (2 taps).</p>
   </section>
 
   <section id="v-res" hidden>
@@ -439,7 +452,8 @@ function renderLanes(){
       +'<div class="clock idle" data-clock="'+l.id+'">0:00.0</div><div class="sub" data-sub="'+l.id+'"></div>'
       +'<button class="sr" data-sr="'+l.id+'"></button></div>'
       +'<button class="go" data-go="'+l.id+'"></button>';
-    c.querySelector('.lane-name').textContent=S.cfg.names[i]||('Athlète '+(i+1));
+    const nm=c.querySelector('.lane-name');nm.textContent=S.cfg.names[i]||('Athlète '+(i+1));
+    nm.addEventListener('click',()=>{if(!S.locked)rename(nm,i)});
     bindPress(c.querySelector('.go'),{onTap:at=>tap(l,at),onLong:at=>finishNoSplit(l,at),longWhen:()=>l.t0!=null&&l.split==null&&Date.now()>=l.t0});
     bindPress(c.querySelector('.sr'),{onTap:at=>srTap(l,at)});
     c.querySelector('[data-undo]').addEventListener('click',()=>undo(l));
@@ -447,10 +461,32 @@ function renderLanes(){
     c.querySelector('.rep-sel').addEventListener('change',e=>{snap(l);l.rep=+e.target.value;l.t0=null;l.split=null;l.sr=[];l.late=false;save();renderLanes()});
     lanesEl.appendChild(c);
   });
-  const add=document.createElement('button');add.className='add-lane';add.disabled=S.cfg.n>=MAX;add.setAttribute('aria-label','Ajouter un couloir');
-  add.innerHTML='<b>+</b> Couloir';add.addEventListener('click',()=>{if(S.cfg.n<MAX){const l=S.lanes[S.cfg.n];Object.assign(l,newLane(l.id));S.cfg.n++;save();renderLanes()}});
-  lanesEl.appendChild(add);
+  lanesEl.dataset.n=S.cfg.n;
+  renderChips();
   tickLanes(true);
+}
+function renderChips(){
+  const el=$('chips');let h='';
+  for(let k=1;k<=MAX;k++){const l=S.lanes[k-1],has=l.t0!=null||l.results.some(x=>x);
+    h+='<button class="chip'+(k>S.cfg.n&&has?' busy':'')+'" data-k="'+k+'" aria-pressed="'+(k===S.cfg.n)+'">'+k+'</button>'}
+  el.innerHTML=h;
+  el.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>setLanes(+b.dataset.k)));
+  const on=el.querySelector('[aria-pressed="true"]');if(on&&on.offsetLeft+on.offsetWidth>el.clientWidth)el.scrollLeft=on.offsetLeft+on.offsetWidth-el.clientWidth+8;
+}
+function setLanes(k){
+  if(k===S.cfg.n)return;
+  if(k<S.cfg.n){const run=S.lanes.slice(k,S.cfg.n).find(l=>l.t0!=null);
+    if(run)return toast(S.cfg.names[run.id]+' est en cours. Arrête son chrono avant de retirer le couloir.')}
+  const hidden=k<S.cfg.n&&S.lanes.slice(k,S.cfg.n).some(l=>l.results.some(x=>x));
+  S.cfg.n=k;save();renderLanes();buzz(15);
+  if(hidden)toast('Résultats des couloirs retirés gardés, ils reviennent si tu les réaffiches');
+}
+function rename(span,i){
+  const inp=document.createElement('input');inp.className='name-in';inp.value=S.cfg.names[i]||'';inp.setAttribute('aria-label','Nom du couloir '+(i+1));
+  span.replaceWith(inp);inp.focus();inp.select();
+  let done=false;const end=ok=>{if(done)return;done=true;if(ok){const v=inp.value.trim();if(v)S.cfg.names[i]=v;save()}renderLanes()};
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')end(true);if(e.key==='Escape')end(false)});
+  inp.addEventListener('blur',()=>end(true));
 }
 function setHTML(el,h){if(el.innerHTML!==h)el.innerHTML=h}
 function tickLanes(){
