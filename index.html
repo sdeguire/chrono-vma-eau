@@ -213,6 +213,20 @@ td input.bad{border-color:var(--warn)}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:12px}
 .card h2{margin:0;font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 @media (max-width:420px){.chip{min-width:40px;height:42px;font-size:18px}.lane-bar{gap:8px}.clock{font-size:40px}.go{font-size:22px}.pace-time{font-size:28px}.deck-actions .btn{padding:8px 10px}}
+
+.tabs{flex-wrap:wrap;row-gap:6px}
+.tabs-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.tabs-right .off-pill{margin-left:0}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.lang button{border:0;background:var(--surface);padding:5px 9px;font:700 12px var(--f-body);letter-spacing:.05em;color:var(--muted)}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.pred{font-size:13px;color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums;min-height:1.4em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pred:empty{visibility:hidden}
+td input::placeholder{color:var(--muted);font-style:italic;opacity:.8}
+td.est{color:var(--muted);font-style:italic}
+td.fast{color:var(--ok)} td.slow{color:var(--warn)}
+@media (max-width:420px){.off-pill{font-size:11px;padding:3px 8px}.tabs .tab{padding:8px 9px}}
+@media (min-width:760px){.pred{white-space:normal;font-size:clamp(11px,9cqi,13px)}}
 </style>
 </head>
 <body>
@@ -233,51 +247,54 @@ td input.bad{border-color:var(--warn)}
       </div>
     </div>
     <div class="deck-actions">
-      <button class="btn primary" id="startAll">Départ tous</button>
-      <button class="btn" id="stopCycle" hidden>Arrêter cycle</button>
-      <button class="btn danger" id="resetAll">Zéro tous</button>
+      <button class="btn primary" id="startAll" data-i18n="startAll"></button>
+      <button class="btn" id="stopCycle" hidden data-i18n="stopCycle"></button>
+      <button class="btn danger" id="resetAll" data-i18n="resetAll"></button>
       <button class="btn" id="lockBtn" aria-pressed="false"></button>
     </div>
   </div>
   <nav class="wrap tabs" role="tablist">
-    <button class="tab" role="tab" data-view="chrono" aria-selected="true">Chronos</button>
-    <button class="tab" role="tab" data-view="res" aria-selected="false">Résultats</button>
-    <button class="tab" role="tab" data-view="set" aria-selected="false">Réglages</button>
-    <span id="offPill" class="off-pill" hidden></span>
+    <button class="tab" role="tab" data-view="chrono" aria-selected="true" data-i18n="tabChrono"></button>
+    <button class="tab" role="tab" data-view="res" aria-selected="false" data-i18n="tabRes"></button>
+    <button class="tab" role="tab" data-view="set" aria-selected="false" data-i18n="tabSet"></button>
+    <span class="tabs-right">
+      <span id="offPill" class="off-pill" hidden></span>
+      <span class="lang" role="group" aria-label="Langue / Language"><button data-lang="fr">FR</button><button data-lang="en">EN</button></span>
+    </span>
   </nav>
 </header>
 
 <main class="wrap">
   <section id="v-chrono">
-    <div class="lane-bar"><span class="lbl">Athlètes</span><div class="chips" id="chips" role="group" aria-label="Nombre d'athlètes"></div></div>
+    <div class="lane-bar"><span class="lbl" data-i18n="athletes"></span><div class="chips" id="chips" role="group"></div></div>
     <div class="lanes" id="lanes"></div>
-    <p class="hint">Choisis le nombre d'athlètes en haut et touche un nom pour le changer. Le gros bouton passe de <b>Départ</b> à <b>Split</b> puis <b>Arrivée</b>; le temps est pris au moment où le doigt touche, et un glissement pour faire défiler n'enregistre rien. <b>Split manqué:</b> garde le doigt appuyé sur Split pour enregistrer directement l'arrivée. <b>Fréq. bras:</b> 3 taps au même point du cycle (2 cycles). Un cadre orange indique un athlète encore dans l'eau à 15 s du send-off, rouge s'il l'a manqué. ↶ annule, ⟲ remet chrono et rép à zéro (2 taps).</p>
+    <p class="hint" data-i18n-html="hintChrono"></p>
   </section>
 
   <section id="v-res" hidden>
     <div class="res">
       <div class="res-head">
-        <div class="field"><label for="grpName">Groupe</label><input id="grpName" type="text"></div>
+        <div class="field"><label for="grpName" data-i18n="group"></label><input id="grpName" type="text"></div>
         <div class="res-actions">
-          <button class="btn primary" id="archiveBtn">Archiver et nouveau groupe</button>
+          <button class="btn primary" id="archiveBtn" data-i18n="archive"></button>
           <button class="btn" id="csvBtn">CSV</button>
-          <button class="btn" id="copyTsv">Copier pour Excel</button>
-          <button class="btn" id="copyTxt">Copier texte</button>
-          <span class="seg" role="group" aria-label="Séparateur décimal">
+          <button class="btn" id="copyTsv" data-i18n="copyExcel"></button>
+          <button class="btn" id="copyTxt" data-i18n="copyText"></button>
+          <span class="seg" role="group" data-i18n-aria="decSep">
             <button data-dec="," id="decComma">0,00</button><button data-dec="." id="decDot">0.00</button>
           </span>
         </div>
       </div>
       <div class="panel">
-        <h2>Vitesse par rép (m/s)</h2>
+        <h2 data-i18n="speedTitle"></h2>
         <div class="legend" id="legend"></div>
         <div class="chart-wrap" id="chart"></div>
       </div>
       <div class="tbl-wrap"><table id="resTable"></table></div>
-      <p class="hint">Les temps sont modifiables (1:23.45 ou 83.45). « Δ 2e » est le 2e 100 moins le 1er, en orange quand il dépasse 3 s. Le CSV et la copie Excel sont en secondes, une ligne par rép.</p>
+      <p class="hint" data-i18n-html="hintRes"></p>
       <textarea class="copybox" id="copyBox" hidden readonly></textarea>
       <div class="panel">
-        <h2>Archives sur cet appareil</h2>
+        <h2 data-i18n="archTitle"></h2>
         <div class="arch" id="arch"></div>
       </div>
     </div>
@@ -286,26 +303,27 @@ td input.bad{border-color:var(--warn)}
   <section id="v-set" hidden>
     <div class="settings">
       <div class="card">
-        <h2>Protocole</h2>
+        <h2 data-i18n="protocol"></h2>
         <div class="row">
-          <div class="field"><label for="sNb">Athlètes</label><input id="sNb" type="number" min="1" max="10" inputmode="numeric"></div>
-          <div class="field"><label for="sSo">Send-off (m:ss)</label><input id="sSo" type="text" inputmode="decimal"></div>
-          <div class="field"><label for="sSt">Écart entre départs (s)</label><input id="sSt" type="number" min="0" max="30" inputmode="numeric"></div>
+          <div class="field"><label for="sNb" data-i18n="athletes"></label><input id="sNb" type="number" min="1" max="10" inputmode="numeric"></div>
+          <div class="field"><label for="sSo" data-i18n="sendoffLbl"></label><input id="sSo" type="text" inputmode="decimal"></div>
+          <div class="field"><label for="sSt" data-i18n="staggerLbl"></label><input id="sSt" type="number" min="0" max="30" inputmode="numeric"></div>
         </div>
         <div class="row">
-          <div class="field"><label for="sRpe">RPE par rép (séparés par virgule)</label><input id="sRpe" type="text"></div>
-          <div class="field"><label for="sDist">Distance (m)</label><input id="sDist" type="number" min="50" step="50" inputmode="numeric"></div>
+          <div class="field"><label for="sRpe" data-i18n="rpeLbl"></label><input id="sRpe" type="text"></div>
+          <div class="field"><label for="sDist" data-i18n="distLbl"></label><input id="sDist" type="number" min="50" step="50" inputmode="numeric"></div>
         </div>
-        <label class="check"><input type="checkbox" id="sAuto"> Départ auto à chaque send-off</label>
-        <label class="check"><input type="checkbox" id="sSound"> Bips du compte à rebours (5 dernières s)</label>
+        <label class="check"><input type="checkbox" id="sAuto"> <span data-i18n="autoLbl"></span></label>
+        <label class="check"><input type="checkbox" id="sSound"> <span data-i18n="soundLbl"></span></label>
+        <label class="check"><input type="checkbox" id="sPred"> <span data-i18n="predLbl"></span></label>
       </div>
       <div class="card">
-        <h2>Athlètes</h2>
+        <h2 data-i18n="athletes"></h2>
         <div class="names" id="names"></div>
       </div>
       <div class="card">
         <h2>Session</h2>
-        <div class="row"><button class="btn danger" id="clearAll">Effacer le groupe en cours</button></div>
+        <div class="row"><button class="btn danger" id="clearAll" data-i18n="clearGroup"></button></div>
       </div>
     </div>
   </section>
@@ -317,9 +335,64 @@ td input.bad{border-color:var(--warn)}
 const KEY='vma-eau-v1';
 const LC=['--l1','--l2','--l3','--l4','--l5','--l6','--l7','--l8','--l9','--l10'];
 const MAX=10, HOLD=600, MOVE=12, WARN_S=15;
-const DEF={n:6,rpe:[2,4,6,8,10],dist:200,sendoff:240,stagger:0,auto:true,sound:true,dec:',',
-  names:Array.from({length:10},(_,i)=>'Athlète '+(i+1))};
 const $=id=>document.getElementById(id);
+
+/* ---------- i18n ---------- */
+const T={
+fr:{startAll:'Départ tous',stopCycle:'Arrêter cycle',resetAll:'Zéro tous',lock:'Verrouiller',unlockHold:'Maintenir pour déverrouiller',
+ tabChrono:'Chronos',tabRes:'Résultats',tabSet:'Réglages',athletes:'Athlètes',athlete:'Athlète',nbAthletes:"Nombre d'athlètes",
+ hintChrono:"Choisis le nombre d'athlètes en haut et touche un nom pour le changer. Un trait bleu sous un chiffre signale un couloir caché qui contient encore des données. Le gros bouton passe de <b>Départ</b> à <b>Split</b> puis <b>Arrivée</b>; le temps est pris au moment où le doigt touche, et un glissement pour faire défiler n'enregistre rien. <b>Split manqué:</b> garde le doigt appuyé sur Split pour enregistrer directement l'arrivée. <b>Fréq. bras:</b> 3 taps au même point du cycle (2 cycles). <b>Prévu</b> estime le temps du prochain palier à partir des paliers déjà faits. Cadre orange: athlète encore dans l'eau à 15 s du send-off, rouge s'il l'a manqué. ↶ annule, ⟲ remet chrono et rép à zéro (2 taps).",
+ group:'Groupe',groupDefault:'Groupe 1',archive:'Archiver et nouveau groupe',copyExcel:'Copier pour Excel',copyText:'Copier texte',decSep:'Séparateur décimal',
+ speedTitle:'Vitesse par rép (m/s)',archTitle:'Archives sur cet appareil',
+ hintRes:"Les temps sont modifiables (1:23.45 ou 83.45). En italique: temps estimés pour les paliers à venir. « Δ 2e » est le 2e 100 moins le 1er, en orange au-delà de 3 s. « vs prévu » compare le temps réel à l'estimation faite avant le palier. Le CSV et la copie Excel sont en secondes, une ligne par rép.",
+ protocol:'Protocole',sendoffLbl:'Send-off (m:ss)',staggerLbl:'Écart entre départs (s)',rpeLbl:'RPE par rép (séparés par virgule)',distLbl:'Distance (m)',
+ autoLbl:'Départ auto à chaque send-off',soundLbl:'Bips du compte à rebours (5 dernières s)',predLbl:'Afficher les temps prévus des paliers suivants',
+ clearGroup:'Effacer le groupe en cours',rep:'Rép',done:'Terminé',start:'Départ',wait:'Attente',finish:'Arrivée',holdFinish:'maintenir = arrivée',
+ staggered:'départ décalé',strokeRate:'Fréq. bras',missed:'Send-off manqué',in:'dans',pred:'Prévu',undoAria:'Annuler le dernier tap',zeroAria:'Remettre chrono et rép à zéro',
+ repAria:'Rép en cours',nameAria:'Nom du couloir {0}',sendoff:'Send-off',startRep:'Départ rép {0}/{1}',lastRep:'Dernière rép',confirm:'Confirmer',
+ resetDone:'Chronos et rép remis à zéro',missedToast1:'{0} athlète a manqué le send-off',missedToastN:'{0} athlètes ont manqué le send-off',
+ noSplit:'Arrivée enregistrée sans split',nothingUndo:'Rien à annuler',holdUnlock:'Garde le doigt appuyé pour déverrouiller',
+ runningLane:'{0} est en cours. Arrête son chrono avant de retirer le couloir.',hiddenKept:'Résultats des couloirs retirés gardés, ils reviennent si tu les réaffiches',
+ saveFail:'Sauvegarde locale impossible sur cet appareil',chartEmpty:'La courbe apparaît dès la première arrivée enregistrée.',
+ thAth:'Athlète',thSecond:'2e {0}',thVsPred:'vs prévu',thSR:'Fréq. bras',lane:'Couloir',
+ archEmpty:'Aucun groupe archivé. « Archiver et nouveau groupe » garde les résultats ici et vide les chronos pour le groupe suivant.',
+ csvAll:'CSV de toute la session ({0})',groups1:'groupe',groupsN:'groupes',repsWord:'réps',copy:'Copier',del:'Supprimer',
+ nothingArchive:'Aucun résultat à archiver dans ce groupe',confirmArchive:"Confirmer l'archivage",archived:'{0} archivé',
+ csvSaved:'CSV enregistré',csvDl:'CSV téléchargé',csvNoDl:'Téléchargement indisponible ici, CSV copié',csvFail:'Enregistrement impossible, CSV copié',
+ copied:'Copié',selectCopy:'Texte sélectionné, copie-le manuellement',confirmClear:"Confirmer l'effacement",cleared:'Groupe en cours effacé, archives conservées',
+ txtTitle:'{0} · test VMA eau {1} ({2}x{3} m)',file:'VMA-eau',
+ h:['Date','Heure','Groupe','Couloir','Athlète','Rép','RPE','Distance (m)','Split (s)','Temps (s)','2e moitié (s)','Vitesse (m/s)','Temps prévu (s)','Écart au prévu (s)','Fréq. bras moy. (c/min)','Fréq. bras mesures'],
+ offReady:'Prêt hors ligne',offOn:'Hors ligne · tout fonctionne',offNot:"Hors ligne: rouvre l'app une fois",chartAria:'Vitesse sur {0} m par rép et par athlète'},
+en:{startAll:'Start all',stopCycle:'Stop cycle',resetAll:'Reset all',lock:'Lock',unlockHold:'Hold to unlock',
+ tabChrono:'Timers',tabRes:'Results',tabSet:'Settings',athletes:'Athletes',athlete:'Athlete',nbAthletes:'Number of athletes',
+ hintChrono:'Pick the number of athletes at the top and tap a name to change it. A blue line under a number means a hidden lane still holds data. The big button goes from <b>Start</b> to <b>Split</b> to <b>Finish</b>; time is taken when your finger touches, and a scrolling swipe records nothing. <b>Missed split:</b> hold the Split button to record the finish directly. <b>Stroke rate:</b> 3 taps at the same point of the cycle (2 cycles). <b>Pred.</b> estimates the next stage from the stages already swum. Orange frame: athlete still swimming 15 s before the send-off, red if they missed it. ↶ undoes, ⟲ resets timer and rep (2 taps).',
+ group:'Group',groupDefault:'Group 1',archive:'Archive and new group',copyExcel:'Copy for Excel',copyText:'Copy text',decSep:'Decimal separator',
+ speedTitle:'Speed by rep (m/s)',archTitle:'Archives on this device',
+ hintRes:'Times are editable (1:23.45 or 83.45). In italics: estimated times for upcoming stages. "Δ 2nd" is the second 100 minus the first, orange above 3 s. "vs pred." compares the actual time with the estimate made before the stage. CSV and Excel copy are in seconds, one row per rep.',
+ protocol:'Protocol',sendoffLbl:'Send-off (m:ss)',staggerLbl:'Gap between starts (s)',rpeLbl:'RPE per rep (comma separated)',distLbl:'Distance (m)',
+ autoLbl:'Auto start at each send-off',soundLbl:'Countdown beeps (last 5 s)',predLbl:'Show predicted times for upcoming stages',
+ clearGroup:'Clear current group',rep:'Rep',done:'Done',start:'Start',wait:'Wait',finish:'Finish',holdFinish:'hold = finish',
+ staggered:'staggered start',strokeRate:'Stroke rate',missed:'Missed send-off',in:'in',pred:'Pred.',undoAria:'Undo last tap',zeroAria:'Reset timer and rep',
+ repAria:'Current rep',nameAria:'Lane {0} name',sendoff:'Send-off',startRep:'Start rep {0}/{1}',lastRep:'Last rep',confirm:'Confirm',
+ resetDone:'Timers and reps reset',missedToast1:'{0} athlete missed the send-off',missedToastN:'{0} athletes missed the send-off',
+ noSplit:'Finish recorded without split',nothingUndo:'Nothing to undo',holdUnlock:'Keep holding to unlock',
+ runningLane:'{0} is still swimming. Stop their timer before removing the lane.',hiddenKept:'Results of removed lanes are kept and come back if you show them again',
+ saveFail:'Local save not available on this device',chartEmpty:'The chart appears after the first recorded finish.',
+ thAth:'Athlete',thSecond:'2nd {0}',thVsPred:'vs pred.',thSR:'Stroke rate',lane:'Lane',
+ archEmpty:'No archived groups. "Archive and new group" keeps the results here and clears the timers for the next group.',
+ csvAll:'CSV of the whole session ({0})',groups1:'group',groupsN:'groups',repsWord:'reps',copy:'Copy',del:'Delete',
+ nothingArchive:'No results to archive in this group',confirmArchive:'Confirm archive',archived:'{0} archived',
+ csvSaved:'CSV saved',csvDl:'CSV downloaded',csvNoDl:'Download not available here, CSV copied',csvFail:'Could not save, CSV copied',
+ copied:'Copied',selectCopy:'Text selected, copy it manually',confirmClear:'Confirm clear',cleared:'Current group cleared, archives kept',
+ txtTitle:'{0} · MAS swim test {1} ({2}x{3} m)',file:'MAS-swim',
+ h:['Date','Time of day','Group','Lane','Athlete','Rep','RPE','Distance (m)','Split (s)','Time (s)','Second half (s)','Speed (m/s)','Predicted time (s)','Diff. vs predicted (s)','Mean stroke rate (c/min)','Stroke rate samples'],
+ offReady:'Ready offline',offOn:'Offline · all working',offNot:'Offline: reopen the app once',chartAria:'Speed over {0} m by rep and athlete'}
+};
+function t(k,...a){const L=T[S.lang]||T.fr;let v=(k in L)?L[k]:T.fr[k];if(typeof v==='string')a.forEach((x,i)=>v=v.split('{'+i+'}').join(x));return v}
+const nameOf=i=>(S.cfg.names[i]&&S.cfg.names[i].trim())||(t('athlete')+' '+(i+1));
+
+/* ---------- state ---------- */
+const DEF={n:6,rpe:[2,4,6,8,10],dist:200,sendoff:240,stagger:0,auto:true,sound:true,pred:true,dec:',',names:Array(10).fill('')};
 function newLane(i){return{id:i,t0:null,split:null,rep:0,results:[],hist:[],sr:[],late:false}}
 function today(){return new Date().toISOString().slice(0,10)}
 function load(){
@@ -328,21 +401,25 @@ function load(){
   if(!p||!p.cfg||!p.lanes)p={cfg:JSON.parse(JSON.stringify(DEF)),lanes:[],cycle:{start:null,fired:0},date:today()};
   while(p.lanes.length<MAX)p.lanes.push(newLane(p.lanes.length));
   p.lanes.forEach(l=>{l.sr=l.sr||[];l.late=!!l.late;l.hist=l.hist||[]});
-  while(p.cfg.names.length<MAX)p.cfg.names.push('Athlète '+(p.cfg.names.length+1));
-  p.archive=p.archive||[];p.group=p.group||'Groupe 1';p.locked=!!p.locked;p.cycle=p.cycle||{start:null,fired:0};
+  p.cfg.names=(p.cfg.names||[]).map(n=>/^(Athl[eè]te) \d+$/.test(n||'')?'':n);
+  while(p.cfg.names.length<MAX)p.cfg.names.push('');
+  if(p.cfg.pred==null)p.cfg.pred=true;
+  if(!p.lang)p.lang=/^fr/i.test(navigator.language||'fr')?'fr':'en';
+  p.archive=p.archive||[];p.locked=!!p.locked;p.cycle=p.cycle||{start:null,fired:0};
+  if(!p.group)p.group=T[p.lang].groupDefault;
   return p;
 }
 let S=load();
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Sauvegarde locale impossible sur cet appareil')}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast(t('saveFail'))}}
 const reps=()=>S.cfg.rpe.length;
 const active=()=>S.lanes.slice(0,S.cfg.n);
 const half=()=>S.cfg.dist/2;
 
-/* formatting */
+/* ---------- formatting ---------- */
 function fmt(ms,mode){
   if(ms==null||isNaN(ms))return '–';
   const neg=ms<0; ms=Math.abs(ms); let m,s,f;
-  if(mode==='t'){const t=Math.floor(ms/100);m=Math.floor(t/600);s=Math.floor((t%600)/10);f=String(t%10)}
+  if(mode==='t'){const x=Math.floor(ms/100);m=Math.floor(x/600);s=Math.floor((x%600)/10);f=String(x%10)}
   else{const c=Math.round(ms/10);m=Math.floor(c/6000);s=Math.floor((c%6000)/100);f=String(c%100).padStart(2,'0')}
   return (neg?'-':'')+m+':'+String(s).padStart(2,'0')+'.'+f;
 }
@@ -356,8 +433,35 @@ function parseT(str){
 function num(x,d,dec){return x==null||isNaN(x)?'':x.toFixed(d).replace('.',dec||S.cfg.dec)}
 function mean(a){return a&&a.length?a.reduce((x,y)=>x+y,0)/a.length:null}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function signed(ms){return (ms>=0?'+':'−')+num(Math.abs(ms)/1000,2)}
 
-/* audio + wake */
+/* ---------- prediction: linear speed vs RPE ----------
+   >=2 completed stages: athlete's own least-squares line.
+   1 completed stage: group mean slope through the athlete's point (needs another athlete with >=2 stages). */
+function fitOf(results,rpe,dist,upto){
+  const pts=[];
+  for(let k=0;k<Math.min(upto,rpe.length);k++){const x=results[k];if(x&&x.total)pts.push([rpe[k],dist/(x.total/1000)])}
+  if(pts.length<2)return{pts};
+  const mx=mean(pts.map(p=>p[0])),my=mean(pts.map(p=>p[1]));
+  let sxy=0,sxx=0;pts.forEach(([x,y])=>{sxy+=(x-mx)*(y-my);sxx+=(x-mx)*(x-mx)});
+  if(!sxx)return{pts};
+  const b=sxy/sxx;return{pts,a:my-b*mx,b};
+}
+function groupSlope(exclude){
+  const s=active().filter(l=>l!==exclude).map(l=>fitOf(l.results,S.cfg.rpe,S.cfg.dist,reps()).b).filter(b=>b!=null&&b>0);
+  return s.length?mean(s):null;
+}
+function predictMs(l,k,upto){ // predicted time (ms) for rep k using stages before `upto`
+  const f=fitOf(l.results,S.cfg.rpe,S.cfg.dist,upto==null?k:upto);
+  let a=f.a,b=f.b;
+  if(b==null&&f.pts.length===1){const g=groupSlope(l);if(g!=null){b=g;a=f.pts[0][1]-g*f.pts[0][0]}}
+  if(b==null||b<=0)return null;
+  const v=a+b*S.cfg.rpe[k];
+  if(!(v>0.2))return null;
+  return S.cfg.dist/v*1000;
+}
+
+/* ---------- audio + wake ---------- */
 let ac=null,wake=null;
 function ensureAudio(){if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(ac&&ac.state==='suspended')ac.resume()}
 function beep(f,d){if(!S.cfg.sound||!ac)return;try{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.type='square';
@@ -368,8 +472,7 @@ document.addEventListener('pointerdown',()=>{ensureAudio();keepAwake()},{passive
 document.addEventListener('contextmenu',e=>{if(e.target.closest('.go,.sr,#lockBtn'))e.preventDefault()});
 function buzz(ms){if(navigator.vibrate)try{navigator.vibrate(ms)}catch(e){}}
 
-/* Scroll-safe press: time is taken at touch-down, committed only if the finger did not move.
-   Optional long press fires at `hold` ms with the touch-down time. */
+/* Scroll-safe press: time taken at touch-down, committed only if the finger did not move. */
 function bindPress(el,{onTap,onLong,longWhen,hold}){
   let p=null;
   const cancel=()=>{if(!p)return;clearTimeout(p.timer);el.classList.remove('holding','pressed');p=null};
@@ -386,13 +489,14 @@ function bindPress(el,{onTap,onLong,longWhen,hold}){
   el.addEventListener('pointerup',e=>{if(!p||e.pointerId!==p.id)return;const q=p;cancel();if(!q.done&&onTap)onTap(q.at)});
   el.addEventListener('pointercancel',cancel);
   el.addEventListener('pointerleave',cancel);
-  el.addEventListener('click',e=>{if(e.detail===0&&onTap)onTap(Date.now())}); // keyboard
+  el.addEventListener('click',e=>{if(e.detail===0&&onTap)onTap(Date.now())});
 }
 
-/* lane logic */
+/* ---------- lane logic ---------- */
 function snap(l){l.hist.push(JSON.stringify({t0:l.t0,split:l.split,rep:l.rep,results:l.results,sr:l.sr,late:l.late}));if(l.hist.length>30)l.hist.shift()}
 function finish(l,at,withSplit){
-  l.results[l.rep]={split:withSplit?l.split:null,total:at-l.t0,sr:l.sr.slice()};
+  const pred=predictMs(l,l.rep);
+  l.results[l.rep]={split:withSplit?l.split:null,total:at-l.t0,sr:l.sr.slice(),pred:pred!=null?Math.round(pred):null};
   l.rep++;l.t0=null;l.split=null;l.sr=[];l.late=false;
 }
 const lastTap={};
@@ -408,23 +512,24 @@ function tap(l,at){
 }
 function finishNoSplit(l,at){
   if(l.t0==null||l.split!=null||at<l.t0)return;
-  snap(l);finish(l,at,false);save();renderLanes();flash(l);toast('Arrivée enregistrée sans split');
+  snap(l);finish(l,at,false);save();renderLanes();flash(l);toast(t('noSplit'));
 }
 function flash(l){const b=document.querySelector('[data-go="'+l.id+'"]');if(b){b.classList.remove('flash');void b.offsetWidth;b.classList.add('flash')}}
-function undo(l){const h=l.hist.pop();if(!h)return toast('Rien à annuler');Object.assign(l,JSON.parse(h));save();renderLanes()}
+function undo(l){const h=l.hist.pop();if(!h)return toast(t('nothingUndo'));Object.assign(l,JSON.parse(h));save();renderLanes()}
 function zero(l){snap(l);l.t0=null;l.split=null;l.rep=0;l.sr=[];l.late=false;save();renderLanes()}
 const srTaps={};
 function srTap(l,at){
   if(l.t0==null||at<l.t0)return;
-  const a=(srTaps[l.id]||[]).filter(t=>at-t<6000);
+  const a=(srTaps[l.id]||[]).filter(x=>at-x<6000);
   if(a.length&&at-a[a.length-1]<250)return;
   a.push(at);
   if(a.length>=3){const v=2*60000/(a[2]-a[0]);if(v>8&&v<90){l.sr.push(Math.round(v*10)/10);save()}srTaps[l.id]=[];buzz([15,30,15])}
   else{srTaps[l.id]=a;buzz(10)}
-  tickLanes(true);
+  tickLanes();
 }
 function startIdle(at){active().forEach((l,i)=>{if(l.t0==null&&l.rep<reps()){l.t0=at+i*S.cfg.stagger*1000;l.sr=[]}})}
 function startAll(){const now=Date.now();startIdle(now);S.cycle={start:now,fired:0};save();renderLanes();renderDeck()}
+function clearLanes(){S.lanes.forEach(l=>Object.assign(l,newLane(l.id)));S.cycle={start:null,fired:0}}
 
 function armConfirm(el,label,fn){
   if(el.dataset.armed){clearTimeout(+el.dataset.armed);delete el.dataset.armed;el.classList.remove('confirm');if(label)el.innerHTML=el.dataset.old;fn();return}
@@ -432,27 +537,27 @@ function armConfirm(el,label,fn){
   el.dataset.armed=setTimeout(()=>{delete el.dataset.armed;el.classList.remove('confirm');if(label)el.innerHTML=el.dataset.old},2500);
 }
 
-/* render lanes */
+/* ---------- render lanes ---------- */
 const ICON_UNDO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>';
 const ICON_ZERO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>';
 const ICON_LOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
 const ICON_OPEN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/></svg>';
 const lanesEl=$('lanes');
 function renderLanes(){
-  lanesEl.innerHTML='';lanesEl.style.setProperty('--n',S.cfg.n);lanesEl.classList.toggle('full',S.cfg.n>=MAX);
+  lanesEl.innerHTML='';lanesEl.style.setProperty('--n',S.cfg.n);lanesEl.dataset.n=S.cfg.n;
   active().forEach((l,i)=>{
     const c=document.createElement('div');c.className='lane';c.dataset.card=l.id;c.style.setProperty('--lc','var('+LC[i]+')');
-    const opts=S.cfg.rpe.map((r,k)=>'<option value="'+k+'"'+(k===l.rep?' selected':'')+'>Rép '+(k+1)+'/'+reps()+' · RPE '+r+'</option>').join('')
-      +'<option value="'+reps()+'"'+(l.rep>=reps()?' selected':'')+'>Terminé</option>';
+    const opts=S.cfg.rpe.map((r,k)=>'<option value="'+k+'"'+(k===l.rep?' selected':'')+'>'+t('rep')+' '+(k+1)+'/'+reps()+' · RPE '+r+'</option>').join('')
+      +'<option value="'+reps()+'"'+(l.rep>=reps()?' selected':'')+'>'+t('done')+'</option>';
     c.innerHTML='<div class="lane-info"><div class="lane-top"><span class="lane-name"></span>'
-      +'<button class="icon" data-undo aria-label="Annuler le dernier tap">'+ICON_UNDO+'</button>'
-      +'<button class="icon" data-zero aria-label="Remettre chrono et rép à zéro">'+ICON_ZERO+'</button></div>'
-      +'<select class="rep-sel" aria-label="Rép en cours">'+opts+'</select>'
-      +'<span class="flag">Send-off manqué</span>'
-      +'<div class="clock idle" data-clock="'+l.id+'">0:00.0</div><div class="sub" data-sub="'+l.id+'"></div>'
-      +'<button class="sr" data-sr="'+l.id+'"></button></div>'
+      +'<button class="icon" data-undo aria-label="'+t('undoAria')+'">'+ICON_UNDO+'</button>'
+      +'<button class="icon" data-zero aria-label="'+t('zeroAria')+'">'+ICON_ZERO+'</button></div>'
+      +'<select class="rep-sel" aria-label="'+t('repAria')+'">'+opts+'</select>'
+      +'<span class="flag">'+t('missed')+'</span>'
+      +'<div class="clock idle">0:00.0</div><div class="sub"></div><div class="pred"></div>'
+      +'<button class="sr"></button></div>'
       +'<button class="go" data-go="'+l.id+'"></button>';
-    const nm=c.querySelector('.lane-name');nm.textContent=S.cfg.names[i]||('Athlète '+(i+1));
+    const nm=c.querySelector('.lane-name');nm.textContent=nameOf(i);
     nm.addEventListener('click',()=>{if(!S.locked)rename(nm,i)});
     bindPress(c.querySelector('.go'),{onTap:at=>tap(l,at),onLong:at=>finishNoSplit(l,at),longWhen:()=>l.t0!=null&&l.split==null&&Date.now()>=l.t0});
     bindPress(c.querySelector('.sr'),{onTap:at=>srTap(l,at)});
@@ -461,12 +566,11 @@ function renderLanes(){
     c.querySelector('.rep-sel').addEventListener('change',e=>{snap(l);l.rep=+e.target.value;l.t0=null;l.split=null;l.sr=[];l.late=false;save();renderLanes()});
     lanesEl.appendChild(c);
   });
-  lanesEl.dataset.n=S.cfg.n;
   renderChips();
-  tickLanes(true);
+  tickLanes();
 }
 function renderChips(){
-  const el=$('chips');let h='';
+  const el=$('chips');el.setAttribute('aria-label',t('nbAthletes'));let h='';
   for(let k=1;k<=MAX;k++){const l=S.lanes[k-1],has=l.t0!=null||l.results.some(x=>x);
     h+='<button class="chip'+(k>S.cfg.n&&has?' busy':'')+'" data-k="'+k+'" aria-pressed="'+(k===S.cfg.n)+'">'+k+'</button>'}
   el.innerHTML=h;
@@ -476,15 +580,15 @@ function renderChips(){
 function setLanes(k){
   if(k===S.cfg.n)return;
   if(k<S.cfg.n){const run=S.lanes.slice(k,S.cfg.n).find(l=>l.t0!=null);
-    if(run)return toast(S.cfg.names[run.id]+' est en cours. Arrête son chrono avant de retirer le couloir.')}
+    if(run)return toast(t('runningLane',nameOf(run.id)))}
   const hidden=k<S.cfg.n&&S.lanes.slice(k,S.cfg.n).some(l=>l.results.some(x=>x));
   S.cfg.n=k;save();renderLanes();buzz(15);
-  if(hidden)toast('Résultats des couloirs retirés gardés, ils reviennent si tu les réaffiches');
+  if(hidden)toast(t('hiddenKept'));
 }
 function rename(span,i){
-  const inp=document.createElement('input');inp.className='name-in';inp.value=S.cfg.names[i]||'';inp.setAttribute('aria-label','Nom du couloir '+(i+1));
+  const inp=document.createElement('input');inp.className='name-in';inp.value=S.cfg.names[i]||'';inp.placeholder=nameOf(i);inp.setAttribute('aria-label',t('nameAria',i+1));
   span.replaceWith(inp);inp.focus();inp.select();
-  let done=false;const end=ok=>{if(done)return;done=true;if(ok){const v=inp.value.trim();if(v)S.cfg.names[i]=v;save()}renderLanes()};
+  let fin=false;const end=ok=>{if(fin)return;fin=true;if(ok){S.cfg.names[i]=inp.value.trim();save()}renderLanes()};
   inp.addEventListener('keydown',e=>{if(e.key==='Enter')end(true);if(e.key==='Escape')end(false)});
   inp.addEventListener('blur',()=>end(true));
 }
@@ -495,7 +599,7 @@ function tickLanes(){
   if(S.cycle.start){const el=now-S.cycle.start,k=Math.floor(el/so);if(k+1<reps())remSO=so-(el%so)}
   active().forEach((l,i)=>{
     const card=lanesEl.querySelector('[data-card="'+l.id+'"]');if(!card)return;
-    const ck=card.querySelector('.clock'),sb=card.querySelector('.sub'),go=card.querySelector('.go'),sr=card.querySelector('.sr');
+    const ck=card.querySelector('.clock'),sb=card.querySelector('.sub'),pr=card.querySelector('.pred'),go=card.querySelector('.go'),sr=card.querySelector('.sr');
     let st,label,small='';
     const last=l.results[l.rep-1];
     const running=l.t0!=null&&now>=l.t0;
@@ -503,13 +607,13 @@ function tickLanes(){
     if(S.cycle.start&&S.cfg.auto&&l.t0==null&&l.rep<reps()){const k=Math.floor((now-S.cycle.start)/so)+1;if(k<reps())nextAt=S.cycle.start+k*so+i*S.cfg.stagger*1000}
     if(l.t0!=null&&!running)nextAt=l.t0;
     let count=false;
-    if(l.rep>=reps()){st='done';label='Terminé';ck.textContent=last?fmt(last.total,'c'):'0:00.0';ck.classList.add('idle')}
-    else if(nextAt!=null){st=l.t0==null?'start':'wait';label=l.t0==null?'Départ':'Attente';small='RPE '+S.cfg.rpe[l.rep];count=true;
+    if(l.rep>=reps()){st='done';label=t('done');ck.textContent=last?fmt(last.total,'c'):'0:00.0';ck.classList.add('idle')}
+    else if(nextAt!=null){st=l.t0==null?'start':'wait';label=l.t0==null?t('start'):t('wait');small='RPE '+S.cfg.rpe[l.rep];count=true;
       const sec=Math.ceil((nextAt-now)/1000);ck.textContent='−'+Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');ck.classList.remove('idle')}
-    else if(l.t0==null){st='start';label='Départ';small='RPE '+S.cfg.rpe[l.rep];ck.textContent='0:00.0';ck.classList.add('idle')}
+    else if(l.t0==null){st='start';label=t('start');small='RPE '+S.cfg.rpe[l.rep];ck.textContent='0:00.0';ck.classList.add('idle')}
     else{ck.classList.remove('idle');ck.textContent=fmt(now-l.t0,'t');
-      if(l.split==null){st='split';label='Split '+half();small='maintenir = arrivée'}
-      else{st='finish';label='Arrivée';small=S.cfg.dist+' m'}}
+      if(l.split==null){st='split';label='Split '+half();small=t('holdFinish')}
+      else{st='finish';label=t('finish');small=S.cfg.dist+' m'}}
     const keep=['flash','holding','pressed'].filter(c=>go.classList.contains(c));
     const cls=['go','s-'+st].concat(keep).join(' ');
     if(go.className!==cls)go.className=cls;
@@ -517,26 +621,29 @@ function tickLanes(){
     go.disabled=(st==='done'||st==='wait');
     let sub='';
     if(running&&l.split!=null)sub=half()+' m <b>'+fmt(l.split,'c')+'</b>';
-    else if(last)sub='Rép '+l.rep+' · '+half()+' <b>'+fmt(last.split,'c')+'</b> · '+S.cfg.dist+' <b>'+fmt(last.total,'c')+'</b>';
-    if(count)sub='Rép '+(l.rep+1)+' · RPE '+S.cfg.rpe[l.rep]+' dans';
+    else if(last)sub=t('rep')+' '+l.rep+' · '+half()+' <b>'+fmt(last.split,'c')+'</b> · '+S.cfg.dist+' <b>'+fmt(last.total,'c')+'</b>';
+    if(count)sub=t('rep')+' '+(l.rep+1)+' · RPE '+S.cfg.rpe[l.rep]+' '+t('in');
     setHTML(sb,sub);ck.classList.toggle('count',count);sb.classList.toggle('count',count);
-    const taps=(srTaps[l.id]||[]).filter(t=>now-t<6000).length;
+    let pt='';
+    if(S.cfg.pred&&l.rep<reps()){const p=predictMs(l,l.rep);if(p!=null)pt=t('pred')+' ~'+fmt(p,'c').slice(0,-1)+' · RPE '+S.cfg.rpe[l.rep]}
+    setHTML(pr,pt);
+    const taps=(srTaps[l.id]||[]).filter(x=>now-x<6000).length;
     const pips='<span class="pips">'+[0,1,2].map(j=>'<i class="'+(j<taps?'on':'')+'"></i>').join('')+'</span>';
     const lastSR=l.sr.length?'<b>'+num(l.sr[l.sr.length-1],1,'.')+'</b> c/min':'';
-    setHTML(sr,'Fréq. bras '+pips+lastSR);
+    setHTML(sr,t('strokeRate')+' '+pips+lastSR);
     sr.disabled=!running;
     card.classList.toggle('late',l.late);
     card.classList.toggle('warn',!l.late&&running&&remSO!=null&&remSO<=WARN_S*1000);
   });
 }
 
-/* deck: send-off cycle */
+/* ---------- deck: send-off cycle ---------- */
 const paceTime=$('paceTime'),paceLbl=$('paceLbl'),ring=$('ring'),hand=$('hand'),stopBtn=$('stopCycle');
 let lastBeep=null;
 function renderDeck(){stopBtn.hidden=!S.cycle.start}
 function tickDeck(){
   const so=S.cfg.sendoff*1000;
-  if(!S.cycle.start){paceTime.textContent=Math.floor(S.cfg.sendoff/60)+':'+String(S.cfg.sendoff%60).padStart(2,'0');paceTime.classList.remove('soon');paceLbl.textContent='Send-off';
+  if(!S.cycle.start){paceTime.textContent=Math.floor(S.cfg.sendoff/60)+':'+String(S.cfg.sendoff%60).padStart(2,'0');paceTime.classList.remove('soon');paceLbl.textContent=t('sendoff');
     ring.style.strokeDashoffset=0;hand.setAttribute('transform','rotate(0 28 28)');return}
   const now=Date.now(),el=now-S.cycle.start,k=Math.floor(el/so);
   if(k>S.cycle.fired){
@@ -550,12 +657,12 @@ function tickDeck(){
     S.cycle.fired=k;
     if(k>=reps()){S.cycle.start=null;renderDeck()}
     save();renderLanes();
-    if(missed){beep(440,.5);toast(missed+(missed>1?' athlètes ont':' athlète a')+' manqué le send-off')}
+    if(missed){beep(440,.5);toast(t(missed>1?'missedToastN':'missedToast1',missed))}
     if(!S.cycle.start)return tickDeck();
   }
   const rem=so-(el%so),secs=Math.ceil(rem/1000),next=k+2;
   paceTime.textContent=Math.floor(secs/60)+':'+String(secs%60).padStart(2,'0');
-  paceLbl.textContent=next<=reps()?('Départ rép '+next+'/'+reps()):'Dernière rép';
+  paceLbl.textContent=next<=reps()?t('startRep',next,reps()):t('lastRep');
   paceTime.classList.toggle('soon',secs<=10&&next<=reps());
   const frac=(el%so)/so;
   ring.style.strokeDashoffset=(150.8*frac).toFixed(1);
@@ -569,52 +676,54 @@ function tickDeck(){
 $('startAll').addEventListener('click',()=>{ensureAudio();startAll();beep(1320,.35)});
 stopBtn.addEventListener('click',()=>{S.cycle.start=null;save();renderDeck()});
 const resetAllBtn=$('resetAll');
-resetAllBtn.addEventListener('click',()=>armConfirm(resetAllBtn,'Confirmer',()=>{
-  active().forEach(l=>{snap(l);l.t0=null;l.split=null;l.rep=0;l.sr=[];l.late=false});S.cycle.start=null;save();renderLanes();renderDeck();toast('Chronos et rép remis à zéro')}));
+resetAllBtn.addEventListener('click',()=>armConfirm(resetAllBtn,t('confirm'),()=>{
+  active().forEach(l=>{snap(l);l.t0=null;l.split=null;l.rep=0;l.sr=[];l.late=false});S.cycle.start=null;save();renderLanes();renderDeck();toast(t('resetDone'))}));
 
-/* lock mode */
+/* ---------- lock ---------- */
 const lockBtn=$('lockBtn');
 function renderLock(){
   document.body.classList.toggle('locked',S.locked);
   lockBtn.classList.toggle('locked',S.locked);lockBtn.setAttribute('aria-pressed',S.locked);
-  lockBtn.innerHTML=S.locked?ICON_LOCK+'Maintenir pour déverrouiller':ICON_OPEN+'Verrouiller';
+  lockBtn.innerHTML=S.locked?ICON_LOCK+t('unlockHold'):ICON_OPEN+t('lock');
 }
 function setLock(v){S.locked=v;save();renderLock();if(v)showView('chrono');buzz(30)}
-bindPress(lockBtn,{onTap:()=>{if(!S.locked)setLock(true);else toast('Garde le doigt appuyé pour déverrouiller')},
+bindPress(lockBtn,{onTap:()=>{if(!S.locked)setLock(true);else toast(t('holdUnlock'))},
   onLong:()=>setLock(false),longWhen:()=>S.locked,hold:900});
 
-/* data rows for export */
-function rowsOf(g){ // g: {date,time,group,dist,rpe,lanes:[{lane,name,results}]}
+/* ---------- export rows ---------- */
+function rowsOf(g){
   const out=[];
   g.lanes.forEach(L=>g.rpe.forEach((r,k)=>{
-    const x=L.results[k]||{},sp=x.split!=null?x.split/1000:null,to=x.total!=null?x.total/1000:null;
+    const x=L.results[k]||{},sp=x.split!=null?x.split/1000:null,to=x.total!=null?x.total/1000:null,pd=x.pred!=null?x.pred/1000:null;
     out.push({date:g.date,time:g.time,group:g.group,lane:L.lane,name:L.name,rep:k+1,rpe:r,dist:g.dist,
-      split:sp,total:to,second:(sp!=null&&to!=null)?to-sp:null,speed:to?g.dist/to:null,srm:mean(x.sr),srs:(x.sr||[]).join(' / ')});
+      split:sp,total:to,second:(sp!=null&&to!=null)?to-sp:null,speed:to?g.dist/to:null,pred:pd,diff:(pd!=null&&to!=null)?to-pd:null,
+      srm:mean(x.sr),srs:(x.sr||[]).join(' / ')});
   }));
   return out;
 }
 function currentGroup(){
   const d=new Date();
   return{date:S.date||today(),time:d.toTimeString().slice(0,5),group:S.group,dist:S.cfg.dist,rpe:S.cfg.rpe.slice(),
-    lanes:active().map((l,i)=>({lane:i+1,name:S.cfg.names[i],results:JSON.parse(JSON.stringify(l.results))}))};
+    lanes:active().map((l,i)=>({lane:i+1,name:nameOf(i),results:JSON.parse(JSON.stringify(l.results))}))};
 }
 function table(rows,sep){
-  const dec=sep===','?'.':S.cfg.dec; // never put comma decimals in comma-separated text
-  const head=['Date','Heure','Groupe','Couloir','Athlète','Rép','RPE','Distance (m)','Split (s)','Temps (s)','2e moitié (s)','Vitesse (m/s)','Fréq. bras moy. (c/min)','Fréq. bras mesures'];
+  const dec=sep===','?'.':S.cfg.dec;
   const q=v=>{v=String(v==null?'':v);return /[;,\t"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
-  const lines=[head.map(q).join(sep)];
-  rows.forEach(r=>lines.push([r.date,r.time,r.group,r.lane,r.name,r.rep,r.rpe,r.dist,num(r.split,2,dec),num(r.total,2,dec),num(r.second,2,dec),num(r.speed,3,dec),num(r.srm,1,dec),r.srs].map(q).join(sep)));
+  const lines=[t('h').map(q).join(sep)];
+  rows.forEach(r=>lines.push([r.date,r.time,r.group,r.lane,r.name,r.rep,r.rpe,r.dist,num(r.split,2,dec),num(r.total,2,dec),num(r.second,2,dec),num(r.speed,3,dec),num(r.pred,2,dec),num(r.diff,2,dec),num(r.srm,1,dec),r.srs].map(q).join(sep)));
   return lines.join('\r\n');
 }
 const csvSep=()=>S.cfg.dec===','?';':',';
 
-/* chart */
+/* ---------- chart ---------- */
 function renderChart(){
-  const W=640,H=270,m={l:46,r:16,t:14,b:40},iw=W-m.l-m.r,ih=H-m.t-m.b,n=reps();
-  const series=active().map((l,i)=>({i,name:S.cfg.names[i],pts:S.cfg.rpe.map((r,k)=>{const x=l.results[k];return x&&x.total?S.cfg.dist/(x.total/1000):null})}));
-  const all=series.flatMap(s=>s.pts).filter(v=>v!=null);
+  const W=640,H=270,m={l:46,r:30,t:14,b:40},iw=W-m.l-m.r,ih=H-m.t-m.b,n=reps();
+  const series=active().map((l,i)=>({i,name:nameOf(i),
+    pts:S.cfg.rpe.map((r,k)=>{const x=l.results[k];return x&&x.total?S.cfg.dist/(x.total/1000):null}),
+    est:S.cfg.rpe.map((r,k)=>{if(!S.cfg.pred||(l.results[k]&&l.results[k].total)||k<l.rep)return null;const p=predictMs(l,k,reps());return p?S.cfg.dist/(p/1000):null})}));
+  const all=series.flatMap(s=>s.pts.concat(s.est)).filter(v=>v!=null);
   $('legend').innerHTML=series.map(s=>'<span style="--lc:var('+LC[s.i]+')"><span class="dot"></span>'+esc(s.name)+'</span>').join('');
-  if(!all.length){$('chart').innerHTML='<p class="chart-empty">La courbe apparaît dès la première arrivée enregistrée.</p>';return}
+  if(!series.some(s=>s.pts.some(v=>v!=null))){$('chart').innerHTML='<p class="chart-empty">'+t('chartEmpty')+'</p>';return}
   let lo=Math.min(...all),hi=Math.max(...all);
   const step=(hi-lo)>0.6?0.2:(hi-lo)>0.25?0.1:0.05;
   lo=Math.floor((lo-step*0.3)/step)*step;hi=Math.ceil((hi+step*0.3)/step)*step;if(hi-lo<step*2)hi=lo+step*2;
@@ -623,33 +732,40 @@ function renderChart(){
   for(let v=lo;v<=hi+1e-9;v+=step){const y=Y(v).toFixed(1);
     g+='<line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"/>'
       +'<text x="'+(m.l-8)+'" y="'+y+'" dy="4" text-anchor="end" font-size="12" fill="var(--muted)">'+v.toFixed(2).replace('.',S.cfg.dec)+'</text>'}
-  S.cfg.rpe.forEach((r,k)=>{g+='<text x="'+X(k).toFixed(1)+'" y="'+(H-m.b+18)+'" text-anchor="middle" font-size="12" fill="var(--muted)">Rép '+(k+1)+'</text>'
+  S.cfg.rpe.forEach((r,k)=>{g+='<text x="'+X(k).toFixed(1)+'" y="'+(H-m.b+18)+'" text-anchor="middle" font-size="12" fill="var(--muted)">'+t('rep')+' '+(k+1)+'</text>'
     +'<text x="'+X(k).toFixed(1)+'" y="'+(H-m.b+33)+'" text-anchor="middle" font-size="11" fill="var(--muted)">RPE '+r+'</text>'});
   series.forEach(s=>{
     const col='var('+LC[s.i]+')';let seg=[];
     const flush=()=>{if(seg.length>1)g+='<polyline fill="none" stroke="'+col+'" stroke-width="2.5" stroke-linejoin="round" points="'+seg.join(' ')+'"/>';seg=[]};
     s.pts.forEach((v,k)=>{if(v==null){flush();return}seg.push(X(k).toFixed(1)+','+Y(v).toFixed(1))});flush();
-    s.pts.forEach((v,k)=>{if(v!=null)g+='<circle cx="'+X(k).toFixed(1)+'" cy="'+Y(v).toFixed(1)+'" r="4" fill="'+col+'" stroke="var(--surface)" stroke-width="1.5"><title>'+esc(s.name)+' rép '+(k+1)+': '+v.toFixed(2)+' m/s</title></circle>'});
+    let lastK=-1;s.pts.forEach((v,k)=>{if(v!=null)lastK=k});
+    const dash=[];if(lastK>=0)dash.push([lastK,s.pts[lastK]]);s.est.forEach((v,k)=>{if(v!=null&&k>lastK)dash.push([k,v])});
+    if(dash.length>1)g+='<polyline fill="none" stroke="'+col+'" stroke-width="2" stroke-dasharray="5 5" opacity=".8" points="'+dash.map(([k,v])=>X(k).toFixed(1)+','+Y(v).toFixed(1)).join(' ')+'"/>';
+    s.est.forEach((v,k)=>{if(v!=null&&k>lastK)g+='<circle cx="'+X(k).toFixed(1)+'" cy="'+Y(v).toFixed(1)+'" r="4" fill="var(--surface)" stroke="'+col+'" stroke-width="2"><title>'+esc(s.name)+' '+t('rep')+' '+(k+1)+' ~'+v.toFixed(2)+' m/s</title></circle>'});
+    s.pts.forEach((v,k)=>{if(v!=null)g+='<circle cx="'+X(k).toFixed(1)+'" cy="'+Y(v).toFixed(1)+'" r="4" fill="'+col+'" stroke="var(--surface)" stroke-width="1.5"><title>'+esc(s.name)+' '+t('rep')+' '+(k+1)+': '+v.toFixed(2)+' m/s</title></circle>'});
   });
-  $('chart').innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Vitesse sur '+S.cfg.dist+' m par rép et par athlète">'+g+'</svg>';
+  $('chart').innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t('chartAria',S.cfg.dist))+'">'+g+'</svg>';
 }
 
-/* results view */
+/* ---------- results ---------- */
 const tbl=$('resTable');
 function renderRes(){
   const d=S.cfg.dist,h=half();
   $('grpName').value=S.group;
-  let html='<thead><tr><th>Athlète</th><th>Rép</th><th>RPE</th><th>'+h+' m</th><th>'+d+' m</th><th>2e '+h+'</th><th>Δ 2e</th><th>m/s</th><th>Fréq. bras</th></tr></thead><tbody>';
+  let html='<thead><tr><th>'+t('thAth')+'</th><th>'+t('rep')+'</th><th>RPE</th><th>'+h+' m</th><th>'+d+' m</th><th>'+t('thSecond',h)+'</th><th>Δ</th><th>m/s</th><th>'+t('thVsPred')+'</th><th>'+t('thSR')+'</th></tr></thead><tbody>';
   active().forEach((l,i)=>{
     S.cfg.rpe.forEach((r,k)=>{
       const x=l.results[k]||{},sp=x.split,to=x.total,two=(sp!=null&&to!=null)?to-sp:null,dl=two!=null?two-sp:null,srm=mean(x.sr);
+      const est=(!to&&S.cfg.pred&&k>=l.rep)?predictMs(l,k,reps()):null;
+      const vp=(to&&x.pred)?to-x.pred:null;
       html+='<tr class="'+(k===0?'first':'')+'" style="--lc:var('+LC[i]+')">'
-        +'<td>'+(k===0?'<span class="dot"></span>'+esc(S.cfg.names[i]):'')+'</td><td>'+(k+1)+'</td><td>'+r+'</td>'
+        +'<td>'+(k===0?'<span class="dot"></span>'+esc(nameOf(i)):'')+'</td><td>'+(k+1)+'</td><td>'+r+'</td>'
         +'<td><input data-l="'+i+'" data-k="'+k+'" data-f="split" value="'+(sp!=null?fmt(sp,'c'):'')+'" inputmode="decimal" aria-label="Split '+h+' m"></td>'
-        +'<td><input data-l="'+i+'" data-k="'+k+'" data-f="total" value="'+(to!=null?fmt(to,'c'):'')+'" inputmode="decimal" aria-label="Temps '+d+' m"></td>'
+        +'<td><input data-l="'+i+'" data-k="'+k+'" data-f="total" value="'+(to!=null?fmt(to,'c'):'')+'"'+(est?' placeholder="~'+fmt(est,'c')+'"':'')+' inputmode="decimal" aria-label="'+d+' m"></td>'
         +'<td class="num">'+(two!=null?fmt(two,'c'):'–')+'</td>'
-        +'<td class="num'+(dl!=null&&dl>3000?' pos':'')+'">'+(dl!=null?(dl>=0?'+':'−')+num(Math.abs(dl)/1000,2):'–')+'</td>'
-        +'<td class="num">'+(to?num(d/(to/1000),2):'–')+'</td>'
+        +'<td class="num'+(dl!=null&&dl>3000?' pos':'')+'">'+(dl!=null?signed(dl):'–')+'</td>'
+        +(to?'<td class="num">'+num(d/(to/1000),2)+'</td>':est?'<td class="num est">~'+num(d/(est/1000),2)+'</td>':'<td class="num">–</td>')
+        +'<td class="num'+(vp!=null?(vp<0?' fast':' slow'):'')+'">'+(vp!=null?signed(vp):'–')+'</td>'
         +'<td class="num">'+(srm!=null?num(srm,1):'–')+'</td></tr>';
     });
   });
@@ -658,7 +774,7 @@ function renderRes(){
     const l=S.lanes[+inp.dataset.l],k=+inp.dataset.k,v=parseT(inp.value);
     if(Number.isNaN(v)){inp.classList.add('bad');return}
     inp.classList.remove('bad');
-    const x=Object.assign({split:null,total:null,sr:[]},l.results[k]);x[inp.dataset.f]=v;
+    const x=Object.assign({split:null,total:null,sr:[],pred:null},l.results[k]);x[inp.dataset.f]=v;
     l.results[k]=(x.split==null&&x.total==null)?null:x;save();renderRes();
   }));
   $('decComma').setAttribute('aria-pressed',S.cfg.dec===',');
@@ -666,38 +782,46 @@ function renderRes(){
   renderChart();renderArch();
 }
 $('grpName').addEventListener('input',e=>{S.group=e.target.value;save()});
-function done(g){return g.lanes.reduce((a,L)=>a+L.results.filter(x=>x&&x.total).length,0)}
+function doneCount(g){return g.lanes.reduce((a,L)=>a+L.results.filter(x=>x&&x.total).length,0)}
 function renderArch(){
   const el=$('arch');
-  if(!S.archive.length){el.innerHTML='<p class="chart-empty">Aucun groupe archivé. « Archiver et nouveau groupe » garde les résultats ici et vide les chronos pour le groupe suivant.</p>';return}
-  el.innerHTML='<div class="row"><button class="btn primary" id="csvAll">CSV de toute la session ('+S.archive.length+' groupe'+(S.archive.length>1?'s':'')+')</button></div>'
-    +S.archive.slice().reverse().map(g=>'<div class="arch-row"><div class="arch-meta"><b>'+esc(g.group)+'</b><span>'+g.date+' '+g.time+' · '+g.lanes.length+' athlètes · '+done(g)+' réps · '+esc(g.lanes.map(L=>L.name).join(', '))+'</span></div>'
-      +'<button class="btn" data-a="csv" data-id="'+g.id+'">CSV</button><button class="btn" data-a="copy" data-id="'+g.id+'">Copier</button>'
-      +'<button class="btn danger" data-a="del" data-id="'+g.id+'">Supprimer</button></div>').join('');
-  $('csvAll').addEventListener('click',()=>{const cur=done(currentGroup())?[currentGroup()]:[];
-    saveCSV(S.archive.concat(cur).flatMap(rowsOf),'VMA-eau_'+(S.date||today())+'_session.csv')});
+  if(!S.archive.length){el.innerHTML='<p class="chart-empty">'+t('archEmpty')+'</p>';return}
+  const nG=S.archive.length;
+  el.innerHTML='<div class="row"><button class="btn primary" id="csvAll">'+t('csvAll',nG+' '+t(nG>1?'groupsN':'groups1'))+'</button></div>'
+    +S.archive.slice().reverse().map(g=>'<div class="arch-row"><div class="arch-meta"><b>'+esc(g.group)+'</b><span>'+g.date+' '+g.time+' · '+g.lanes.length+' '+t('athletes').toLowerCase()+' · '+doneCount(g)+' '+t('repsWord')+' · '+esc(g.lanes.map(L=>L.name).join(', '))+'</span></div>'
+      +'<button class="btn" data-a="csv" data-id="'+g.id+'">CSV</button><button class="btn" data-a="copy" data-id="'+g.id+'">'+t('copy')+'</button>'
+      +'<button class="btn danger" data-a="del" data-id="'+g.id+'">'+t('del')+'</button></div>').join('');
+  $('csvAll').addEventListener('click',()=>{const cur=doneCount(currentGroup())?[currentGroup()]:[];
+    saveCSV(S.archive.concat(cur).flatMap(rowsOf),t('file')+'_'+(S.date||today())+'_session.csv')});
   el.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>{
     const g=S.archive.find(x=>x.id===b.dataset.id);if(!g)return;
     if(b.dataset.a==='csv')saveCSV(rowsOf(g),fileName(g));
     if(b.dataset.a==='copy')copy(table(rowsOf(g),'\t'));
-    if(b.dataset.a==='del')armConfirm(b,'Confirmer',()=>{S.archive=S.archive.filter(x=>x!==g);save();renderArch()});
+    if(b.dataset.a==='del')armConfirm(b,t('confirm'),()=>{S.archive=S.archive.filter(x=>x!==g);save();renderArch()});
   }));
 }
-function fileName(g){return 'VMA-eau_'+g.date+'_'+String(g.group).replace(/[^\w\-À-ÿ]+/g,'-')+'.csv'}
+function fileName(g){return t('file')+'_'+g.date+'_'+String(g.group).replace(/[^\w\-À-ÿ]+/g,'-')+'.csv'}
 $('archiveBtn').addEventListener('click',()=>{
   const g=currentGroup();
-  if(!done(g))return toast('Aucun résultat à archiver dans ce groupe');
-  armConfirm($('archiveBtn'),'Confirmer l\'archivage',()=>{
-    g.id=String(Date.now());S.archive.push(g);
-    active().forEach(l=>Object.assign(l,newLane(l.id)));S.cycle={start:null,fired:0};
-    const m=String(S.group).match(/^(.*?)(\d+)$/);S.group=m?m[1]+(+m[2]+1):S.group+' 2';
-    save();renderRes();renderLanes();renderDeck();toast(g.group+' archivé');
+  if(!doneCount(g))return toast(t('nothingArchive'));
+  armConfirm($('archiveBtn'),t('confirmArchive'),()=>{
+    g.id=String(Date.now());S.archive.push(g);clearLanes();
+    const mm=String(S.group).match(/^(.*?)(\d+)$/);S.group=mm?mm[1]+(+mm[2]+1):S.group+' 2';
+    save();renderRes();renderLanes();renderDeck();toast(t('archived',g.group));
   });
 });
 
-/* export */
+/* ---------- export ---------- */
+let dlP=null;
+function getDL(){if(!dlP)dlP=(window.claude&&window.claude.use?Promise.resolve(window.claude.use('downloads')):Promise.resolve(null)).catch(()=>null);return dlP}
 async function saveCSV(rows,name){
-  const text='\uFEFF'+table(rows,csvSep());
+  const text='﻿'+table(rows,csvSep());
+  const dl=await getDL();
+  if(dl){
+    try{await dl.save({filename:name,data:text});toast(t('csvSaved'))}
+    catch(e){if(e&&e.code==='declined')return;copy(text.slice(1));toast(t('csvFail'))}
+    return;
+  }
   const blob=new Blob([text],{type:'text/csv;charset=utf-8'});
   try{
     const file=new File([blob],name,{type:'text/csv'});
@@ -705,18 +829,18 @@ async function saveCSV(rows,name){
   }catch(e){if(e&&e.name==='AbortError')return}
   try{
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();
-    setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast('CSV téléchargé');
-  }catch(e){copy(text.slice(1));toast('Téléchargement impossible, CSV copié')}
+    setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast(t('csvDl'));
+  }catch(e){copy(text.slice(1));toast(t('csvNoDl'))}
 }
 function copy(text){
   const box=$('copyBox');
-  const fallback=()=>{box.hidden=false;box.value=text;box.focus();box.select();toast('Texte sélectionné, copie-le manuellement')};
-  try{navigator.clipboard.writeText(text).then(()=>{box.hidden=true;toast('Copié')},fallback)}catch(e){fallback()}
+  const fallback=()=>{box.hidden=false;box.value=text;box.focus();box.select();toast(t('selectCopy'))};
+  try{navigator.clipboard.writeText(text).then(()=>{box.hidden=true;toast(t('copied'))},fallback)}catch(e){fallback()}
 }
 function txt(){
-  const h=half();let out=S.group+' · test VMA eau '+(S.date||today())+' ('+reps()+'x'+S.cfg.dist+' m)\n';
-  active().forEach((l,i)=>{out+='\n'+S.cfg.names[i]+'\n';S.cfg.rpe.forEach((r,k)=>{const x=l.results[k];
-    out+='  Rép '+(k+1)+' (RPE '+r+'): '+(x?h+' '+fmt(x.split,'c')+' / '+S.cfg.dist+' '+fmt(x.total,'c')+(x.sr&&x.sr.length?' / FB '+mean(x.sr).toFixed(1):''):'–')+'\n'})});
+  const h=half();let out=t('txtTitle',S.group,S.date||today(),reps(),S.cfg.dist)+'\n';
+  active().forEach((l,i)=>{out+='\n'+nameOf(i)+'\n';S.cfg.rpe.forEach((r,k)=>{const x=l.results[k];
+    out+='  '+t('rep')+' '+(k+1)+' (RPE '+r+'): '+(x?h+' '+fmt(x.split,'c')+' / '+S.cfg.dist+' '+fmt(x.total,'c')+(x.sr&&x.sr.length?' / SR '+mean(x.sr).toFixed(1):''):'–')+'\n'})});
   return out;
 }
 $('csvBtn').addEventListener('click',()=>{const g=currentGroup();saveCSV(rowsOf(g),fileName(g))});
@@ -724,16 +848,16 @@ $('copyTsv').addEventListener('click',()=>copy(table(rowsOf(currentGroup()),'\t'
 $('copyTxt').addEventListener('click',()=>copy(txt()));
 document.querySelectorAll('[data-dec]').forEach(b=>b.addEventListener('click',()=>{S.cfg.dec=b.dataset.dec;save();renderRes()}));
 
-/* settings */
-const [sNb,sSo,sSt,sRpe,sDist,sAuto,sSound]=['sNb','sSo','sSt','sRpe','sDist','sAuto','sSound'].map($);
+/* ---------- settings ---------- */
+const [sNb,sSo,sSt,sRpe,sDist,sAuto,sSound,sPred]=['sNb','sSo','sSt','sRpe','sDist','sAuto','sSound','sPred'].map($);
 function renderSet(){
   const c=S.cfg;
   sNb.value=c.n;sSo.value=Math.floor(c.sendoff/60)+':'+String(c.sendoff%60).padStart(2,'0');sSt.value=c.stagger;
-  sRpe.value=c.rpe.join(', ');sDist.value=c.dist;sAuto.checked=c.auto;sSound.checked=c.sound;
+  sRpe.value=c.rpe.join(', ');sDist.value=c.dist;sAuto.checked=c.auto;sSound.checked=c.sound;sPred.checked=c.pred;
   const n=$('names');n.innerHTML='';
   for(let i=0;i<c.n;i++){const f=document.createElement('div');f.className='field';f.style.setProperty('--lc','var('+LC[i]+')');
-    f.innerHTML='<label for="nm'+i+'">Couloir '+(i+1)+'</label><input id="nm'+i+'" type="text">';
-    const inp=f.querySelector('input');inp.value=c.names[i]||'';inp.addEventListener('input',()=>{c.names[i]=inp.value;save()});n.appendChild(f)}
+    f.innerHTML='<label for="nm'+i+'">'+t('lane')+' '+(i+1)+'</label><input id="nm'+i+'" type="text">';
+    const inp=f.querySelector('input');inp.value=c.names[i]||'';inp.placeholder=t('athlete')+' '+(i+1);inp.addEventListener('input',()=>{c.names[i]=inp.value;save()});n.appendChild(f)}
 }
 sNb.addEventListener('change',()=>{S.cfg.n=Math.max(1,Math.min(MAX,parseInt(sNb.value)||6));save();renderSet()});
 sSo.addEventListener('change',()=>{const v=parseT(sSo.value);if(v&&v>=30000){S.cfg.sendoff=Math.round(v/1000);save()}renderSet()});
@@ -742,31 +866,52 @@ sRpe.addEventListener('change',()=>{const a=sRpe.value.split(/[,;\s]+/).map(Numb
 sDist.addEventListener('change',()=>{const v=parseInt(sDist.value);if(v>=50){S.cfg.dist=v;save()}renderSet()});
 sAuto.addEventListener('change',()=>{S.cfg.auto=sAuto.checked;save()});
 sSound.addEventListener('change',()=>{S.cfg.sound=sSound.checked;save()});
+sPred.addEventListener('change',()=>{S.cfg.pred=sPred.checked;save()});
 const clr=$('clearAll');
-clr.addEventListener('click',()=>armConfirm(clr,'Confirmer l\'effacement',()=>{
-  active().forEach(l=>Object.assign(l,newLane(l.id)));S.cycle={start:null,fired:0};S.date=today();save();toast('Groupe en cours effacé, archives conservées')}));
+clr.addEventListener('click',()=>armConfirm(clr,t('confirmClear'),()=>{clearLanes();S.date=today();save();toast(t('cleared'))}));
 
-/* tabs */
+/* ---------- language ---------- */
+function applyLang(){
+  document.documentElement.lang=S.lang;
+  document.querySelectorAll('[data-i18n]').forEach(e=>e.textContent=t(e.dataset.i18n));
+  document.querySelectorAll('[data-i18n-html]').forEach(e=>e.innerHTML=t(e.dataset.i18nHtml));
+  document.querySelectorAll('[data-i18n-aria]').forEach(e=>e.setAttribute('aria-label',t(e.dataset.i18nAria)));
+  document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===S.lang));
+  renderLock();updPill();
+}
+document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>{
+  const old=S.lang;if(old===b.dataset.lang)return;
+  if(S.group===T[old].groupDefault)S.group=T[b.dataset.lang].groupDefault;
+  S.lang=b.dataset.lang;save();applyLang();
+  const v=['chrono','res','set'].find(x=>!$('v-'+x).hidden);showView(v);
+}));
+
+/* ---------- tabs ---------- */
 function showView(v){
   document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x.dataset.view===v));
   ['chrono','res','set'].forEach(x=>$('v-'+x).hidden=(x!==v));
   if(v==='chrono')renderLanes();if(v==='res')renderRes();if(v==='set')renderSet();
 }
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showView(t.dataset.view)));
+document.querySelectorAll('.tab').forEach(x=>x.addEventListener('click',()=>showView(x.dataset.view)));
 
 let tt;function toast(m){const e=$('toast');e.textContent=m;e.hidden=false;clearTimeout(tt);tt=setTimeout(()=>e.hidden=true,2200)}
 
-renderLock();renderLanes();renderDeck();
+/* ---------- offline (standalone site only) ---------- */
+const swOK='serviceWorker' in navigator&&(/github\.io$/.test(location.hostname)||location.hostname==='localhost');
+function updPill(){
+  if(!swOK)return;const pill=$('offPill'),ok=!!navigator.serviceWorker.controller;
+  pill.hidden=false;pill.className='off-pill'+(ok?' ok':'');
+  pill.textContent=ok?(navigator.onLine?t('offReady'):t('offOn')):t('offNot');
+}
+if(swOK){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  navigator.serviceWorker.ready.then(updPill);navigator.serviceWorker.addEventListener('controllerchange',updPill);
+  window.addEventListener('online',updPill);window.addEventListener('offline',updPill);
+}
+
+applyLang();renderLanes();renderDeck();
 setInterval(()=>{tickDeck();if(!$('v-chrono').hidden)tickLanes()},50);
 })();
-if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
-  const pill=document.getElementById('offPill');
-  const upd=()=>{const ok=!!navigator.serviceWorker.controller;pill.hidden=false;pill.className='off-pill'+(ok?' ok':'');
-    pill.textContent=ok?(navigator.onLine?'Prêt hors ligne':'Hors ligne · tout fonctionne'):'Hors ligne: rouvre l\'app une fois';};
-  navigator.serviceWorker.ready.then(upd);navigator.serviceWorker.addEventListener('controllerchange',upd);
-  window.addEventListener('online',upd);window.addEventListener('offline',upd);upd();
-}
 </script>
 
 </body>
