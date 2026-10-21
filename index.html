@@ -71,6 +71,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 .tabs{display:flex;gap:4px;padding-block:0 8px}
 .tab{border:0;background:none;padding:8px 12px;border-radius:8px;font-weight:600;color:var(--muted)}
+.off-pill{margin-left:auto;align-self:center;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--surface-2);color:var(--warn)}
+.off-pill.ok{color:var(--ok)}
 .tab[aria-selected="true"]{background:var(--surface-2);color:var(--ink)}
 
 main{padding-block:14px 28px}
@@ -227,6 +229,7 @@ td input.bad{border-color:var(--warn)}
     <button class="tab" role="tab" data-view="chrono" aria-selected="true">Chronos</button>
     <button class="tab" role="tab" data-view="res" aria-selected="false">Résultats</button>
     <button class="tab" role="tab" data-view="set" aria-selected="false">Réglages</button>
+    <span id="offPill" class="off-pill" hidden></span>
   </nav>
 </header>
 
@@ -712,7 +715,14 @@ let tt;function toast(m){const e=$('toast');e.textContent=m;e.hidden=false;clear
 renderLock();renderLanes();renderDeck();
 setInterval(()=>{tickDeck();if(!$('v-chrono').hidden)tickLanes()},50);
 })();
-if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  const pill=document.getElementById('offPill');
+  const upd=()=>{const ok=!!navigator.serviceWorker.controller;pill.hidden=false;pill.className='off-pill'+(ok?' ok':'');
+    pill.textContent=ok?(navigator.onLine?'Prêt hors ligne':'Hors ligne · tout fonctionne'):'Hors ligne: rouvre l\'app une fois';};
+  navigator.serviceWorker.ready.then(upd);navigator.serviceWorker.addEventListener('controllerchange',upd);
+  window.addEventListener('online',upd);window.addEventListener('offline',upd);upd();
+}
 </script>
 
 </body>
