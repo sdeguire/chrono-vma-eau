@@ -54,7 +54,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .pace svg{width:56px;height:56px;flex:none}
 .pace-txt{display:flex;flex-direction:column;line-height:1.05}
 .pace-time{font-family:var(--f-num);font-weight:700;font-size:32px;font-variant-numeric:tabular-nums;letter-spacing:.01em}
-.pace-time.soon{color:var(--warn)}
+.pace-time.soon{color:var(--alert)}
 .pace-lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
 .deck-actions{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
 .btn{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:10px 14px;font-weight:600;min-height:44px;
@@ -103,6 +103,8 @@ body.locked .rep-sel{pointer-events:none;opacity:.7}
 .lane.late .flag{display:block}
 .clock{font-family:var(--f-num);font-weight:600;font-size:46px;line-height:1;font-variant-numeric:tabular-nums;margin-top:2px}
 .clock.idle{color:var(--muted)}
+.clock.count{color:var(--alert);font-weight:700}
+.sub.count{color:var(--alert);font-weight:700}
 .sub{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-height:1.4em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sub b{color:var(--ink);font-weight:600}
 .sr{align-self:flex-start;border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:6px 10px;min-height:38px;
@@ -455,15 +457,20 @@ function tickLanes(){
   const now=Date.now(),so=S.cfg.sendoff*1000;
   let remSO=null;
   if(S.cycle.start){const el=now-S.cycle.start,k=Math.floor(el/so);if(k+1<reps())remSO=so-(el%so)}
-  active().forEach(l=>{
+  active().forEach((l,i)=>{
     const card=lanesEl.querySelector('[data-card="'+l.id+'"]');if(!card)return;
     const ck=card.querySelector('.clock'),sb=card.querySelector('.sub'),go=card.querySelector('.go'),sr=card.querySelector('.sr');
     let st,label,small='';
     const last=l.results[l.rep-1];
     const running=l.t0!=null&&now>=l.t0;
+    let nextAt=null;
+    if(S.cycle.start&&S.cfg.auto&&l.t0==null&&l.rep<reps()){const k=Math.floor((now-S.cycle.start)/so)+1;if(k<reps())nextAt=S.cycle.start+k*so+i*S.cfg.stagger*1000}
+    if(l.t0!=null&&!running)nextAt=l.t0;
+    let count=false;
     if(l.rep>=reps()){st='done';label='Terminé';ck.textContent=last?fmt(last.total,'c'):'0:00.0';ck.classList.add('idle')}
+    else if(nextAt!=null){st=l.t0==null?'start':'wait';label=l.t0==null?'Départ':'Attente';small='RPE '+S.cfg.rpe[l.rep];count=true;
+      const sec=Math.ceil((nextAt-now)/1000);ck.textContent='−'+Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');ck.classList.remove('idle')}
     else if(l.t0==null){st='start';label='Départ';small='RPE '+S.cfg.rpe[l.rep];ck.textContent='0:00.0';ck.classList.add('idle')}
-    else if(!running){st='wait';label='Attente';ck.textContent=fmt(now-l.t0,'t');ck.classList.add('idle');small='départ décalé'}
     else{ck.classList.remove('idle');ck.textContent=fmt(now-l.t0,'t');
       if(l.split==null){st='split';label='Split '+half();small='maintenir = arrivée'}
       else{st='finish';label='Arrivée';small=S.cfg.dist+' m'}}
@@ -475,7 +482,8 @@ function tickLanes(){
     let sub='';
     if(running&&l.split!=null)sub=half()+' m <b>'+fmt(l.split,'c')+'</b>';
     else if(last)sub='Rép '+l.rep+' · '+half()+' <b>'+fmt(last.split,'c')+'</b> · '+S.cfg.dist+' <b>'+fmt(last.total,'c')+'</b>';
-    setHTML(sb,sub);
+    if(count)sub='Rép '+(l.rep+1)+' · RPE '+S.cfg.rpe[l.rep]+' dans';
+    setHTML(sb,sub);ck.classList.toggle('count',count);sb.classList.toggle('count',count);
     const taps=(srTaps[l.id]||[]).filter(t=>now-t<6000).length;
     const pips='<span class="pips">'+[0,1,2].map(j=>'<i class="'+(j<taps?'on':'')+'"></i>').join('')+'</span>';
     const lastSR=l.sr.length?'<b>'+num(l.sr[l.sr.length-1],1,'.')+'</b> c/min':'';
